@@ -23,28 +23,38 @@ namespace Flappy_bird
             upPipe_pictureBox.Left -= pipeSpeed;
             bird_pictureBox.Top += gravity;
             score_label.Text = "SCORE: " + score.ToString();
-            if (downPipe_pictureBox.Left < -80)
+
+            if(downPipe_pictureBox.Left < -80 && upPipe_pictureBox.Left < -80)
             {
-                downPipe_pictureBox.Left = random.Next(360,500);
-                score++;
+                movePipe();
+                score += 2;
+                if (score > 1 && score % 10 == 0)
+                {
+                    pipeSpeed += 1;
+                }
             }
-            if(upPipe_pictureBox.Left < -80)
-            {
-                upPipe_pictureBox.Left = random.Next(360, 500);
-                score++;
-            }
-             if(score > 1 && score % 10 == 0)
-            {
-                pipeSpeed += 2;
-            }
+            
             if(bird_pictureBox.Bounds.IntersectsWith(downPipe_pictureBox.Bounds) 
                 || bird_pictureBox.Bounds.IntersectsWith(upPipe_pictureBox.Bounds)
                 || bird_pictureBox.Bounds.IntersectsWith(ground_pictureBox.Bounds))
             {
                 timer1.Stop();
                 end_label.Text = "SCORE:\n" + score;
-                end_pictureBox.Visible = end_label.Visible = true;
+                end_pictureBox.Visible = end_label.Visible = end_button.Visible = end_button.Enabled = true;
             }
+        }
+
+        private void movePipe()
+        {
+            int topDown = 308;
+            int topUp = -120;
+
+            Random random = new Random();
+            newLocation = random.Next(360, 500);
+            int index = random.Next(verticalMovement.Length);
+            upPipe_pictureBox.Top = topUp + verticalMovement[index];
+            downPipe_pictureBox.Top = topDown + verticalMovement[index] - 80;
+            upPipe_pictureBox.Left = downPipe_pictureBox.Left = newLocation;
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
@@ -53,7 +63,7 @@ namespace Flappy_bird
             {
                 if (bird_pictureBox.Top > 0 && bird_pictureBox.Top < 452)
                 {
-                    gravity = -5;
+                    gravity = -8;
                 }
             }
         }
@@ -64,9 +74,15 @@ namespace Flappy_bird
             {
                 if (bird_pictureBox.Top > 0 && bird_pictureBox.Top < 452)
                 {
-                    gravity = 5;
+                    gravity = 8;
                 }
             }
+        }
+
+        private void end_button_Click(object sender, EventArgs e)
+        {
+            this.Close();
+            //Application.Restart();
         }
     }
 }
